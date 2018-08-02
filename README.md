@@ -6,7 +6,9 @@ It is derived from the awesome [Pytorch Custom CUDA kernel Tutorial](https://git
 
 **Disclaimer**
 
-`This function has not been heavily tested. Use at your own risks`
+```
+This function has not been heavily tested. Use at your own risks
+```
 ## Description
 
 Implements a function `searchsorted(a, v)` that works just like the [numpy version](https://docs.scipy.org/doc/numpy/reference/generated/numpy.searchsorted.html#numpy.searchsorted) except that `a` and `v` are assumed to be matrices of respective shape `(nrows, ncols_a)` and `(nrows, ncols_v)`.
@@ -22,3 +24,11 @@ Just `make`
 ## Testing
 
 Try `python test.py` with `torch` available. Tested on Pytorch v0.4.
+
+
+```
+Searching 50000x1000 values in 50000x300 entries
+ GPU:  searchsorted in 143.391ms
+ CPU:  searchsorted in 8384.157ms
+     difference: 0.0
+```

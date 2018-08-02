@@ -31,7 +31,8 @@ THCudaTensor * searchsorted(THCudaTensor *a_tensor, THCudaTensor *v_tensor)
 
 
     // Create a result tensor of the same size as `v_tensor`
-    THCudaTensor *res_tensor = THCudaTensor_newWithTensor(state, v_tensor);
+    THCudaTensor *res_tensor = THCudaTensor_new(state);
+    THCudaTensor_resizeAs(state, res_tensor, v_tensor);
 
     // get the data of all tensors
     float *res = THCudaTensor_data(state, res_tensor);

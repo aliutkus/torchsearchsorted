@@ -11,17 +11,17 @@
 __device__
 int eval(float val, float *a, int row, int col, int ncol)
 {
-  /* Evaluates whether a[row,col] <= val < a[row, col+1]*/
+  /* Evaluates whether a[row,col] < val <= a[row, col+1]*/
 
     if (col == ncol-1){
       // we are on the right border. This is the answer.
       return 0;}
 
     // a[row,col] <= val ?
-    int is_lower = (a[row*ncol + col] <= val);
+    int is_lower = (a[row*ncol + col] < val);
 
     // a[row,col+1] > val ?
-    int is_next_higher = (a[row*ncol + col + 1] > val);
+    int is_next_higher = (a[row*ncol + col + 1] >= val);
 
     if (is_lower && is_next_higher) {
       // we found the answer
@@ -45,7 +45,7 @@ int binary_search(float *a, int row, float val, int ncol)
 
   Returns -1 if `val` is smaller than the smallest value found within that
   row of `a`. Otherwise, return the column index `res` such that:
-  a[row, col] <= val < a[row, col+1]. in case `val` is larger than the
+  a[row, col] < val <= a[row, col+1]. in case `val` is larger than the
   largest element of that row of `a`, simply return `ncol`-1. */
 
   //start with left at 0 and right at ncol
@@ -95,7 +95,7 @@ void searchsorted_kernel(float *res, float *a, float *v, int nrow, int ncol_a, i
     int idx = row*ncol_v+col;
 
     // apply binary search
-    res[idx] = binary_search(a, row, v[idx], ncol_a);
+    res[idx] = binary_search(a, row, v[idx], ncol_a)+1;
 }
 
 
