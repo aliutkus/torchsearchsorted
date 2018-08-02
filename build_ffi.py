@@ -5,13 +5,13 @@ from os import path as osp
 from torch.utils.ffi import create_extension
 
 abs_path = osp.dirname(osp.realpath(__file__))
-extra_objects = [osp.join(abs_path, 'build/mathutil_cuda_kernel.so')]
+extra_objects = [osp.join(abs_path, 'build/searchsorted_cuda_kernel.so')]
 extra_objects += glob.glob('/usr/local/cuda/lib64/*.a')
 
 ffi = create_extension(
-    'mathutils',
-    headers=['include/mathutil_cuda.h'],
-    sources=['src/mathutil_cuda.c'],
+    'searchsorted',
+    headers=['include/searchsorted_cuda.h'],
+    sources=['src/searchsorted_cuda.c'],
     define_macros=[('WITH_CUDA', None)],
     relative_to=__file__,
     with_cuda=True,
