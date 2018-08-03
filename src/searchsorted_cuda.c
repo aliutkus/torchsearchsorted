@@ -2,6 +2,7 @@
 #include "searchsorted_cuda_kernel.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 extern THCState *state;
 
@@ -18,21 +19,24 @@ THCudaTensor * searchsorted(THCudaTensor *a_tensor, THCudaTensor *v_tensor)
 {
     // Get the number of dimensions
 
-    assert(THCudaTensor_nDimension(state, a_tensor) == 2, "input `a` must be matrix.\n");
-    assert(THCudaTensor_nDimension(state, v_tensor) == 2, "input `v` must be matrix.\n");
+    assert(THCudaTensor_nDimension(state, a_tensor) == 2, "input `a` must be 2-D.\n");
+    assert(THCudaTensor_nDimension(state, v_tensor) == 2, "input `v` must be 2-D.\n");
 
-    long int nrow = THCudaTensor_size(state, a_tensor, 0);
+    long int nrow_a = THCudaTensor_size(state, a_tensor, 0);
     long int nrow_v = THCudaTensor_size(state, v_tensor, 0);
 
-    assert(nrow==nrow_v, "`a` and `v` must have the same number of rows.\n");
+    assert((nrow_a==nrow_v)||(nrow_a==1)||(nrow_v==1), "`a` and `v` must have the same number of rows or one of them must have only one row.\n");
 
     int ncol_a = THCudaTensor_size(state, a_tensor, 1);
     int ncol_v = THCudaTensor_size(state, v_tensor, 1);
 
 
-    // Create a result tensor of the same size as `v_tensor`
+    // identify the number of rows for the result
+    int nrow_res = fmax(nrow_a, nrow_v);
+
+    // Create a result tensor of size (nrow_res, ncol_v)
     THCudaTensor *res_tensor = THCudaTensor_new(state);
-    THCudaTensor_resizeAs(state, res_tensor, v_tensor);
+    THCudaTensor_resize2d(state, res_tensor, nrow_res, ncol_v);
 
     // get the data of all tensors
     float *res = THCudaTensor_data(state, res_tensor);
@@ -43,6 +47,6 @@ THCudaTensor * searchsorted(THCudaTensor *a_tensor, THCudaTensor *v_tensor)
     cudaStream_t stream = THCState_getCurrentStream(state);
 
     // launch the cuda searchsorted function
-    searchsorted_cuda(res, a, v, nrow, ncol_a, ncol_v, stream);
+    searchsorted_cuda(res, a, v, nrow_res, nrow_a, nrow_v, ncol_a, ncol_v, stream);
     return res_tensor;
 }

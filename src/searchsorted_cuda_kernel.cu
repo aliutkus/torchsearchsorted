@@ -79,43 +79,45 @@ int binary_search(float *a, int row, float val, int ncol)
   return -1;
 }
 
-
 __global__
-void searchsorted_kernel(float *res, float *a, float *v, int nrow, int ncol_a, int ncol_v)
+void searchsorted_kernel(float *res, float *a, float *v, int nrow_res, int nrow_a, int nrow_v, int ncol_a, int ncol_v)
 {
     // get current row and column
     int row = blockIdx.y*blockDim.y+threadIdx.y;
     int col = blockIdx.x*blockDim.x+threadIdx.x;
 
-    // check whether we are outside the bounds. If so, return
-    if ((row >= nrow) || (col >= ncol_v)) {
+    // check whether we are outside the bounds of what needs be computed.
+    if ((row >= nrow_res) || (col >= ncol_v)) {
       return;}
 
     // get the value to look for
-    int idx = row*ncol_v+col;
+    int row_in_v = (nrow_v==1) ? 0: row;
+    int row_in_a = (nrow_a==1) ? 0: row;
+    int idx_in_v = row_in_v*ncol_v+col;
+    int idx_in_res = row*ncol_v+col;
 
     // apply binary search
-    res[idx] = binary_search(a, row, v[idx], ncol_a)+1;
+    res[idx_in_res] = binary_search(a, row_in_a, v[idx_in_v], ncol_a)+1;
 }
 
 
-void searchsorted_cuda(float *res, float *a, float *v, int nrow, int ncol_a, int ncol_v, cudaStream_t stream)
+void searchsorted_cuda(float *res, float *a, float *v, int nrow_res, int nrow_a, int nrow_v, int ncol_a, int ncol_v, cudaStream_t stream)
 {
   // Prepare the error report
   cudaError_t err;
 
   // prepare the kernel configuration
-  dim3 threadsPerBlock(ncol_v, nrow);
+  dim3 threadsPerBlock(ncol_v, nrow_res);
   dim3 blocksPerGrid(1, 1);
-  if (nrow*ncol_v > 1024){
+  if (nrow_res*ncol_v > 1024){
      threadsPerBlock.x = 1024;
      threadsPerBlock.y = 1;
      blocksPerGrid.x = ceil(double(ncol_v)/double(threadsPerBlock.x));
-     blocksPerGrid.y = ceil(double(nrow)/double(threadsPerBlock.y));
+     blocksPerGrid.y = ceil(double(nrow_res)/double(threadsPerBlock.y));
   }
 
   // launch the kernel
-  searchsorted_kernel<<<blocksPerGrid, threadsPerBlock, 0, stream>>>(res, a, v, nrow, ncol_a, ncol_v);
+  searchsorted_kernel<<<blocksPerGrid, threadsPerBlock, 0, stream>>>(res, a, v, nrow_res, nrow_a, nrow_v, ncol_a, ncol_v);
 
   // check error
   err = cudaGetLastError();

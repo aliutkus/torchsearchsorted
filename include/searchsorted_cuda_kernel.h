@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 
-void searchsorted_cuda(float *res, float *a, float *v, int nrow, int ncol_a, int ncol_v, cudaStream_t stream);
+void searchsorted_cuda(float *res, float *a, float *v, int nrow_res, int nrow_a, int nrow_v, int ncol_a, int ncol_v, cudaStream_t stream);
 
 #ifdef __cplusplus
 }
