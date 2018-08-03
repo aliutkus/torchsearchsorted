@@ -12,12 +12,11 @@ the output is of the same size as `v`. Only works with pytorch tensors that are
 already on the GPU.
 
 
-**Disclaimer**
+**Disclaimers**
 
-```
 * This function has not been heavily tested. Use at your own risks
 * When `a` is not sorted, the results vary from numpy's version. But I decided not to care about this because the function should not be called in this case.
-```
+
 
 ## Installation
 
