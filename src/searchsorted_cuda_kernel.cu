@@ -110,8 +110,8 @@ void searchsorted_cuda(float *res, float *a, float *v, int nrow_res, int nrow_a,
   dim3 threadsPerBlock(ncol_v, nrow_res);
   dim3 blocksPerGrid(1, 1);
   if (nrow_res*ncol_v > 1024){
-     threadsPerBlock.x = 1024;
-     threadsPerBlock.y = 1;
+     threadsPerBlock.x = fmin(1024, ncol_v);
+     threadsPerBlock.y = floor(1024/threadsPerBlock.x);
      blocksPerGrid.x = ceil(double(ncol_v)/double(threadsPerBlock.x));
      blocksPerGrid.y = ceil(double(nrow_res)/double(threadsPerBlock.y));
   }
