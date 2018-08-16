@@ -1,5 +1,5 @@
-from . import cusearchsorted
 import torch
+import cusearchsorted
 
 
 def searchsorted(a, v, out=None):

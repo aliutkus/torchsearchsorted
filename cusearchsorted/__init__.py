@@ -1,6 +1,6 @@
 
 from torch.utils.ffi import _wrap_function
-from ._searchsorted import lib as _lib, ffi as _ffi
+from ._cusearchsorted import lib as _lib, ffi as _ffi
 
 __all__ = []
 def _import_symbols(locals):

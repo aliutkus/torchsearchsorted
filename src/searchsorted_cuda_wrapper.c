@@ -6,7 +6,7 @@
 
 extern THCState *state;
 
-void searchsorted_cuda_wrapper(THCudaTensor *a_tensor, THCudaTensor *v_tensor, res_tensor)
+void searchsorted_cuda_wrapper(THCudaTensor *a_tensor, THCudaTensor *v_tensor, THCudaTensor *res_tensor)
 {
     // Get the dimensions
     long int nrow_a = THCudaTensor_size(state, a_tensor, 0);

@@ -9,9 +9,9 @@ extra_objects = [osp.join(abs_path, 'build/searchsorted_cuda_kernel.so')]
 extra_objects += glob.glob('/usr/local/cuda/lib64/*.a')
 
 ffi = create_extension(
-    'searchsorted',
-    headers=['include/searchsorted_cuda.h'],
-    sources=['src/searchsorted_cuda.c'],
+    'cusearchsorted',
+    headers=['include/searchsorted_cuda_wrapper.h'],
+    sources=['src/searchsorted_cuda_wrapper.c'],
     define_macros=[('WITH_CUDA', None)],
     relative_to=__file__,
     with_cuda=True,
