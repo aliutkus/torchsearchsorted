@@ -1,8 +1,9 @@
 import torch
-import cusearchsorted
+from .cusearchsorted import searchsorted_cuda_wrapper
 
 
 def searchsorted(a, v, out=None):
+    assert a.is_cuda and v.is_cuda, "Input tensors must all be on the GPU"
     assert len(a.shape) == 2, "input `a` must be 2-D."
     assert len(v.shape) == 2, "input `v` mus(t be 2-D."
     assert (a.shape[0] == v.shape[0]
@@ -16,5 +17,5 @@ def searchsorted(a, v, out=None):
     else:
         out = torch.zeros_like(v)
 
-    cusearchsorted.searchsorted_cuda_wrapper(a, v, out)
+    searchsorted_cuda_wrapper(a, v, out)
     return out

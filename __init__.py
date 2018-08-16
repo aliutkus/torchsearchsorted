@@ -1,2 +1,2 @@
 import torch
-import cusearchsorted.searchsorted as searchsorted
+from .searchsorted import searchsorted
