@@ -6,36 +6,16 @@
 
 extern THCState *state;
 
-// I don't know how to raise an exception properly in a pytorch C extension.
-// doing it dirty by killing the program.
-void assert(int cond, char *message)
+void searchsorted_cuda_wrapper(THCudaTensor *a_tensor, THCudaTensor *v_tensor, res_tensor)
 {
-  if (!cond){
-    puts(message);
-    exit(-1);}
-}
-
-THCudaTensor * searchsorted(THCudaTensor *a_tensor, THCudaTensor *v_tensor)
-{
-    // Get the number of dimensions
-
-    assert(THCudaTensor_nDimension(state, a_tensor) == 2, "input `a` must be 2-D.\n");
-    assert(THCudaTensor_nDimension(state, v_tensor) == 2, "input `v` must be 2-D.\n");
-
+    // Get the dimensions
     long int nrow_a = THCudaTensor_size(state, a_tensor, 0);
     long int nrow_v = THCudaTensor_size(state, v_tensor, 0);
-
-    assert((nrow_a==nrow_v)||(nrow_a==1)||(nrow_v==1), "`a` and `v` must have the same number of rows or one of them must have only one row.\n");
-
     int ncol_a = THCudaTensor_size(state, a_tensor, 1);
     int ncol_v = THCudaTensor_size(state, v_tensor, 1);
 
-
     // identify the number of rows for the result
     int nrow_res = fmax(nrow_a, nrow_v);
-
-    // Create a result tensor of size (nrow_res, ncol_v)
-    THCudaTensor *res_tensor = THCudaTensor_newWithSize2d(state, nrow_res, ncol_v);
 
     // get the data of all tensors
     float *res = THCudaTensor_data(state, res_tensor);
@@ -47,5 +27,4 @@ THCudaTensor * searchsorted(THCudaTensor *a_tensor, THCudaTensor *v_tensor)
 
     // launch the cuda searchsorted function
     searchsorted_cuda(res, a, v, nrow_res, nrow_a, nrow_v, ncol_a, ncol_v, stream);
-    return res_tensor;
 }
