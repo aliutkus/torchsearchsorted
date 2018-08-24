@@ -11,7 +11,7 @@ BUILD_DIR := build
 INCLUDE_DIRS := include
 TORCH_FFI_BUILD := build_ffi.py
 SEARCHSORTED_KERNEL := $(BUILD_DIR)/searchsorted_cuda_kernel.so
-TORCH_FFI_TARGET := $(BUILD_DIR)/cusearchsorted/_searchsorted.so
+TORCH_FFI_TARGET := $(BUILD_DIR)/searchsorted/cusearchsorted/_searchsorted.so
 
 INCLUDE_FLAGS := $(foreach d, $(INCLUDE_DIRS), -I$d)
 

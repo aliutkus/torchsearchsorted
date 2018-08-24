@@ -22,7 +22,12 @@ already on the GPU.
 
 ## Installation
 
-Just `make`
+Just `make`. This will compile and install the CUDA searchsorted into the
+`searchsorted` directory.
+
+## Usage
+
+With the `searchsorted` directory in the Python PATH, just do `import searchsorted`.
 
 
 ## Testing
@@ -35,4 +40,9 @@ Searching for 50000x1000 values in 50000x300 entries
 GPU:  searchsorted in 119.483ms
 CPU:  searchsorted in 8625.762ms
     difference: 0.0
+Looking for 50000x1000 values in 50000x300 entries
+GPU:  searchsorted in 0.142ms
+CPU:  searchsorted in 7337.219ms
+    difference: 0.0
 ```
+The first run comprises the time of allocation, while the second one does not.

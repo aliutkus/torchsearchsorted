@@ -11,11 +11,13 @@ def searchsorted(a, v, out=None):
             or v.shape[0] == 1), ("`a` and `v` must have the same number of "
                                   "rows or one of them must have only one ")
 
+    result_shape = (max(a.shape[0], v.shape[0]), v.shape[1])
     if out is not None:
-        assert out.shape == v.shape, ("If the output tensor is provided, its "
-                                      "shape must match that of `v`.")
+        assert out.shape == result_shape, ("If the output tensor is provided, "
+                                           "its shape must be correct. Here: "
+                                           ''.join(result_shape))
     else:
-        out = torch.zeros((max(a.shape[0], v.shape[0]), v.shape[1]),
+        out = torch.zeros(*result_shape,
                           dtype=v.dtype, layout=v.layout, device=v.device)
 
     searchsorted_cuda_wrapper(a, v, out)
