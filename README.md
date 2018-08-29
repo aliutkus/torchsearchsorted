@@ -22,17 +22,21 @@ already on the GPU.
 
 ## Installation
 
-Just `make`. This will compile and install the CUDA searchsorted into the
-`searchsorted` directory.
+Just `make`. This will compile and install the CUDA searchsorted module into the
+`searchsorted` sub-directory.
 
 ## Usage
 
-With the `searchsorted` directory in the Python PATH, just do `import searchsorted`.
+With the `searchsorted` directory somewhere in the Python PATH, just do `import searchsorted`. For instance, I typically clone this repo in my code, and then:
+
+```
+from pytorch_searchsorted.searchsorted import searchsorted
+```
 
 
 ## Testing
 
-Try `python test.py` with `torch` available. Tested on Pytorch v0.4.
+Try `python test.py` with `torch` available for an example. Tested on Pytorch v0.4.1
 
 
 ```
