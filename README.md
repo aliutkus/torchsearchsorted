@@ -6,9 +6,10 @@ It is derived from the awesome [Pytorch Custom CUDA kernel Tutorial](https://git
 
 ## Description
 
-Implements a function `searchsorted(a, v)` that works just like the [numpy version](https://docs.scipy.org/doc/numpy/reference/generated/numpy.searchsorted.html#numpy.searchsorted) except that `a` and `v` are matrices.
+Implements a function `searchsorted(a, v, out)` that works just like the [numpy version](https://docs.scipy.org/doc/numpy/reference/generated/numpy.searchsorted.html#numpy.searchsorted) except that `a` and `v` are matrices.
 * `a` is of shape either `(1, ncols_a)` or `(nrows, ncols_a)`
 * `b` is of shape either `(1, ncols_v)` or `(nrows, ncols_v)`.
+* `out` is either `None` or of shape `(nrows, ncols_v)`. If provided and of the right shape, the result is put there. This is to avoid costly memory allocations if the user already did it.
 
 the output is of size as `(nrows, ncols_v)`. Only works with pytorch tensors that are
 already on the GPU.
