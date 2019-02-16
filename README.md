@@ -21,7 +21,7 @@ the output is of size as `(nrows, ncols_v)`. If all input tensors are on GPU, a 
 
 ## Installation
 
-Just `python setup.py install`. This will compile and install the torchsearchsorted module.
+Just `python setup.py install`, in the `install` folder. This will compile and install the torchsearchsorted module.
 be careful that sometimes, `nvcc` needs versions of `gcc` and `g++` that are older than those found by default on the system. If so, just create symbolic links to the right versions in your cuda/bin folder (where `nvcc` is) 
 
 be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.0.1
