@@ -3,6 +3,8 @@
 This repository is an implementation of the searchsorted function to work for pytorch CUDA Tensors. Initially derived from the great [C extension tutorial](https://github.com/chrischoy/pytorch-custom-cuda-tutorial), but totally changed since then because that option is not available anymore on pytorch 1.0.
 
 
+> Warning: only works with pytorch > v1.0
+
 ## Description
 
 Implements a function `searchsorted(a, v, out)` that works just like the [numpy version](https://docs.scipy.org/doc/numpy/reference/generated/numpy.searchsorted.html#numpy.searchsorted) except that `a` and `v` are matrices.
