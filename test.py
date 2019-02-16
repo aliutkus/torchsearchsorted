@@ -1,5 +1,5 @@
 import torch
-from searchsorted import searchsorted
+from torchsearchsorted import searchsorted
 import time
 import numpy as np
 
@@ -8,8 +8,8 @@ if __name__ == '__main__':
     ntests = 2
 
     # defining the problem dimensions
-    nrows_a = 50000
-    nrows_v = 50000
+    nrows_a = 5000
+    nrows_v = 5000
     nsorted_values = 300
     nvalues = 1000
 
@@ -17,6 +17,7 @@ if __name__ == '__main__':
     # further ones will not
     test_GPU = None
     test_CPU = None
+    test_numpy = None
 
     for ntest in range(ntests):
         print("Looking for %dx%d values in %dx%d entries" % (nrows_v, nvalues,
@@ -37,17 +38,17 @@ if __name__ == '__main__':
 
         t0 = time.time()
 
+
         # now do the CPU
-        nrows_res = max(nrows_a, nrows_v)
-        if test_CPU is None:
-            test_CPU = np.zeros((nrows_res, nvalues))
-        for n in range(nrows_res):
-            test_CPU[n] = np.searchsorted(a[n if nrows_a > 1 else 0],
-                                          v[n if nrows_v > 1 else 0])
+        a = a.to('cpu')
+        v = v.to('cpu')
+
+        t0 = time.time()
+        test_CPU = searchsorted(a, v, test_CPU)
         print('CPU:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
 
         # compute the difference between both
-        error = torch.norm(torch.tensor(test_CPU).float().to('cuda')
+        error = torch.norm(test_CPU.to('cuda')
                            - test_GPU).cpu().numpy()
 
-        print('    difference:', error)
+        print('    difference between CPU and GPU: %0.3f' % error)
