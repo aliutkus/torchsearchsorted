@@ -8,8 +8,8 @@ if __name__ == '__main__':
     ntests = 2
 
     # defining the problem dimensions
-    nrows_a = 5000
-    nrows_v = 5000
+    nrows_a = 50000
+    nrows_v = 50000
     nsorted_values = 300
     nvalues = 1000
 
@@ -17,7 +17,6 @@ if __name__ == '__main__':
     # further ones will not
     test_GPU = None
     test_CPU = None
-    test_numpy = None
 
     for ntest in range(ntests):
         print("Looking for %dx%d values in %dx%d entries" % (nrows_v, nvalues,
@@ -35,9 +34,6 @@ if __name__ == '__main__':
         t0 = time.time()
         test_GPU = searchsorted(a, v, test_GPU)
         print('GPU:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
-
-        t0 = time.time()
-
 
         # now do the CPU
         a = a.to('cpu')

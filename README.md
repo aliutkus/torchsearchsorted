@@ -2,7 +2,6 @@
 
 This repository is an implementation of the searchsorted function to work for pytorch CUDA Tensors.
 
-It is derived from the awesome [Pytorch Custom CUDA kernel Tutorial](https://github.com/chrischoy/pytorch-custom-cuda-tutorial)
 
 ## Description
 
@@ -11,8 +10,7 @@ Implements a function `searchsorted(a, v, out)` that works just like the [numpy 
 * `b` is of shape either `(1, ncols_v)` or `(nrows, ncols_v)`.
 * `out` is either `None` or of shape `(nrows, ncols_v)`. If provided and of the right shape, the result is put there. This is to avoid costly memory allocations if the user already did it.
 
-the output is of size as `(nrows, ncols_v)`. Only works with pytorch tensors that are
-already on the GPU.
+the output is of size as `(nrows, ncols_v)`. If all input tensors are on GPU, a cuda version will be called. Otherwise, it will be on CPU.
 
 
 **Disclaimers**
@@ -23,22 +21,23 @@ already on the GPU.
 
 ## Installation
 
-Just `make`. This will compile and install the CUDA searchsorted module into the
-`searchsorted` sub-directory.
+Just `python setup.py install`. This will compile and install the torchsearchsorted module.
+be careful that sometimes, `nvcc` needs versions of `gcc` and `g++` that are older than those found by default on the system. If so, just create symbolic links to the right versions in your cuda/bin folder (where `nvcc` is) 
+
+be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.0.1
 
 ## Usage
 
-With the `searchsorted` directory somewhere in the Python PATH, just do `import searchsorted`. For instance, I typically clone this repo in my code, and then:
+Just import the torchsearchsorted package after installation. I typically do:
 
 ```
-from pytorch_searchsorted.searchsorted import searchsorted
+from torchsearchsorted import searchsorted
 ```
 
 
 ## Testing
 
-Try `python test.py` with `torch` available for an example. Tested on Pytorch v0.4.1
-
+Try `python test.py` with `torch` available for an example. 
 
 ```
 Searching for 50000x1000 values in 50000x300 entries

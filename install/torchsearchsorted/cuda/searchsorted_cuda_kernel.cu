@@ -6,10 +6,20 @@
 #include <math.h>
 #include <float.h>
 
+
+
+
 #include "searchsorted_cuda_kernel.h"
 
+#include <torch/extension.h>
+
+#include <cuda.h>
+#include <cuda_runtime.h>
+#include <vector>
+
+template <typename scalar_t>
 __device__
-int eval(float val, float *a, int row, int col, int ncol)
+int eval(scalar_t val, scalar_t *a, int row, int col, int ncol)
 {
   /* Evaluates whether a[row,col] < val <= a[row, col+1]*/
 
@@ -35,8 +45,9 @@ int eval(float val, float *a, int row, int col, int ncol)
     }
 }
 
+template <typename scalar_t>
 __device__
-int binary_search(float *a, int row, float val, int ncol)
+int binary_search(scalar_t *a, int row, scalar_t val, int ncol)
 {
   /* Look for the value `val` within row `row` of matrix `a`, which
   has `ncol` columns.
@@ -58,7 +69,7 @@ int binary_search(float *a, int row, float val, int ncol)
 
       // check the relative position of val: is this midpoint smaller or larger
       // than val ?
-      int rel_pos = eval(val, a, row, mid, ncol);
+      int rel_pos = eval<scalar_t>(val, a, row, mid, ncol);
 
       // we found the point
       if(rel_pos == 0) {
@@ -79,8 +90,13 @@ int binary_search(float *a, int row, float val, int ncol)
   return -1;
 }
 
+template <typename scalar_t>
 __global__
-void searchsorted_kernel(float *res, float *a, float *v, int nrow_res, int nrow_a, int nrow_v, int ncol_a, int ncol_v)
+void searchsorted_kernel(
+  scalar_t *res,
+  scalar_t *a,
+  scalar_t *v,
+  int nrow_res, int nrow_a, int nrow_v, int ncol_a, int ncol_v)
 {
     // get current row and column
     int row = blockIdx.y*blockDim.y+threadIdx.y;
@@ -101,29 +117,35 @@ void searchsorted_kernel(float *res, float *a, float *v, int nrow_res, int nrow_
 }
 
 
-void searchsorted_cuda(float *res, float *a, float *v, int nrow_res, int nrow_a, int nrow_v, int ncol_a, int ncol_v, cudaStream_t stream)
-{
-  // Prepare the error report
-  cudaError_t err;
+void searchsorted_cuda(
+  at::Tensor a,
+  at::Tensor v,
+  at::Tensor res){
 
-  // prepare the kernel configuration
-  dim3 threadsPerBlock(ncol_v, nrow_res);
-  dim3 blocksPerGrid(1, 1);
-  if (nrow_res*ncol_v > 1024){
-     threadsPerBlock.x = fmin(1024, ncol_v);
-     threadsPerBlock.y = floor(1024/threadsPerBlock.x);
-     blocksPerGrid.x = ceil(double(ncol_v)/double(threadsPerBlock.x));
-     blocksPerGrid.y = ceil(double(nrow_res)/double(threadsPerBlock.y));
+      // Get the dimensions
+      auto nrow_a = a.size(/*dim=*/0);
+      auto nrow_v = v.size(/*dim=*/0);
+      auto ncol_a = a.size(/*dim=*/1);
+      auto ncol_v = v.size(/*dim=*/1);
+
+      auto nrow_res = fmax(nrow_a, nrow_v);
+
+      // prepare the kernel configuration
+      dim3 threads(ncol_v, nrow_res);
+      dim3 blocks(1, 1);
+      if (nrow_res*ncol_v > 1024){
+         threads.x = fmin(1024, ncol_v);
+         threads.y = floor(1024/threads.x);
+         blocks.x = ceil(double(ncol_v)/double(threads.x));
+         blocks.y = ceil(double(nrow_res)/double(threads.y));
+      }
+
+      AT_DISPATCH_ALL_TYPES(res.type(), "searchsorted cuda", ([&] {
+        searchsorted_kernel<scalar_t><<<blocks, threads>>>(
+          res.data<scalar_t>(),
+          a.data<scalar_t>(),
+          v.data<scalar_t>(),
+          nrow_res, nrow_a, nrow_v, ncol_a, ncol_v);
+      }));
+
   }
-
-  // launch the kernel
-  searchsorted_kernel<<<blocksPerGrid, threadsPerBlock, 0, stream>>>(res, a, v, nrow_res, nrow_a, nrow_v, ncol_a, ncol_v);
-
-  // check error
-  err = cudaGetLastError();
-  if (cudaSuccess != err)
-  {
-      fprintf(stderr, "CUDA kernel failed : %s\n", cudaGetErrorString(err));
-      exit(-1);
-  }
-}
