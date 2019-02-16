@@ -1,6 +1,6 @@
 # Pytorch Custom CUDA kernel for searchsorted
 
-This repository is an implementation of the searchsorted function to work for pytorch CUDA Tensors.
+This repository is an implementation of the searchsorted function to work for pytorch CUDA Tensors. Initially derived from the great [C extension tutorial](https://github.com/chrischoy/pytorch-custom-cuda-tutorial), but totally changed since then because that option is not available anymore on pytorch 1.0.
 
 
 ## Description
