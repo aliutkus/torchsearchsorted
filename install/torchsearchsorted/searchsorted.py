@@ -16,10 +16,6 @@ except ImportError:
     SEARCHSORTED_GPU_AVAILABLE = False
 
 
-print('CPU searchsorted available', SEARCHSORTED_CPU_AVAILABLE)
-print('GPU searchosrted available', SEARCHSORTED_GPU_AVAILABLE)
-
-
 def searchsorted(a, v, out=None):
     assert len(a.shape) == 2, "input `a` must be 2-D."
     assert len(v.shape) == 2, "input `v` mus(t be 2-D."
