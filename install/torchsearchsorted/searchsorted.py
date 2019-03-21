@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 
 # trying to import the CPU searchsorted
 SEARCHSORTED_CPU_AVAILABLE = True
