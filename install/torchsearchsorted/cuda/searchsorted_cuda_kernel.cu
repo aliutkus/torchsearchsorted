@@ -128,13 +128,13 @@ void searchsorted_cuda(
       auto ncol_a = a.size(/*dim=*/1);
       auto ncol_v = v.size(/*dim=*/1);
 
-      auto nrow_res = fmax(nrow_a, nrow_v);
+      auto nrow_res = std::max(nrow_a, nrow_v);
 
       // prepare the kernel configuration
       dim3 threads(ncol_v, nrow_res);
       dim3 blocks(1, 1);
       if (nrow_res*ncol_v > 1024){
-         threads.x = fmin(1024, ncol_v);
+         threads.x = std::min(1024, int(ncol_v));
          threads.y = floor(1024/threads.x);
          blocks.x = ceil(double(ncol_v)/double(threads.x));
          blocks.y = ceil(double(nrow_res)/double(threads.y));
