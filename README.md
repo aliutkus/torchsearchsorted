@@ -23,8 +23,9 @@ the output is of size as `(nrows, ncols_v)`. If all input tensors are on GPU, a 
 
 ## Installation
 
-Just `python setup.py install`, in the `install` folder. This will compile and install the torchsearchsorted module.
-be careful that sometimes, `nvcc` needs versions of `gcc` and `g++` that are older than those found by default on the system. If so, just create symbolic links to the right versions in your cuda/bin folder (where `nvcc` is) 
+Just `python setup.py install`, in the root folder of this repo. This will compile
+and install the torchsearchsorted module.
+be careful that sometimes, `nvcc` needs versions of `gcc` and `g++` that are older than those found by default on the system. If so, just create symbolic links to the right versions in your cuda/bin folder (where `nvcc` is)
 
 be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.0.1
 
@@ -39,7 +40,7 @@ from torchsearchsorted import searchsorted
 
 ## Testing
 
-Try `python test.py` with `torch` available for an example. 
+Try `python test.py` with `torch` available for an example.
 
 ```
 Searching for 50000x1000 values in 50000x300 entries
