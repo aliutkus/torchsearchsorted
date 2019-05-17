@@ -3,7 +3,7 @@
 This repository is an implementation of the searchsorted function to work for pytorch CUDA Tensors. Initially derived from the great [C extension tutorial](https://github.com/chrischoy/pytorch-custom-cuda-tutorial), but totally changed since then because building C extensions is not available anymore on pytorch 1.0.
 
 
-> Warning: only works with pytorch > v1.0
+> Warning: only works with pytorch > v1.0 and CUDA > v10
 
 ## Description
 
