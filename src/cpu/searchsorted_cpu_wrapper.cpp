@@ -1,13 +1,6 @@
-#include <torch/extension.h>
 #include "searchsorted_cpu_wrapper.h"
-#include <iostream>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <float.h>
-
-int eval(float val, float *a, int row, int col, int ncol)
+int eval(float val, float *a, int64_t row, int64_t col, int64_t ncol)
 {
     /* Evaluates whether a[row,col] < val <= a[row, col+1]*/
     if (col == ncol-1){
@@ -15,10 +8,10 @@ int eval(float val, float *a, int row, int col, int ncol)
 	return 0;}
 
     // a[row,col] <= val ?
-    int is_lower = (a[row*ncol + col] < val);
+    bool is_lower = (a[row*ncol + col] < val);
 
     // a[row,col+1] > val ?
-    int is_next_higher = (a[row*ncol + col + 1] >= val);
+    bool is_next_higher = (a[row*ncol + col + 1] >= val);
 
     if (is_lower && is_next_higher) {
         // we found the answer
@@ -33,7 +26,7 @@ int eval(float val, float *a, int row, int col, int ncol)
 }
 
 
-int binary_search(float *a, int row, float val, int ncol)
+int64_t binary_search(float *a, int64_t row, float val, int64_t ncol)
 {
   /* Look for the value `val` within row `row` of matrix `a`, which
   has `ncol` columns.
@@ -46,12 +39,12 @@ int binary_search(float *a, int row, float val, int ncol)
   largest element of that row of `a`, simply return `ncol`-1. */
 
   //start with left at 0 and right at number of columns of a
-  int right = ncol;
-  int left = 0;
+  int64_t right = ncol;
+  int64_t left = 0;
 
   while (right >= left) {
       // take the midpoint of current left and right cursors
-      int mid = left + (right-left)/2;
+      int64_t mid = left + (right-left)/2;
 
       // check the relative position of val: is this midpoint smaller or larger
       // than val ?
@@ -96,17 +89,17 @@ void searchsorted_cpu_wrapper(
     float *a_data = a.data<float>();
     float *v_data = v.data<float>();
 
-    for (int row=0; row<nrow_res; row++){
-      for (int col=0; col<ncol_v; col++){
+    for (int64_t row=0; row<nrow_res; row++){
+      for (int64_t col=0; col<ncol_v; col++){
         // get the value to look for
-        int row_in_v = (nrow_v==1) ? 0: row;
-        int row_in_a = (nrow_a==1) ? 0: row;
+        int64_t row_in_v = (nrow_v==1) ? 0: row;
+        int64_t row_in_a = (nrow_a==1) ? 0: row;
 
-	int idx_in_v = row_in_v*ncol_v+col;
-	int idx_in_res = row*ncol_v+col;
+	int64_t idx_in_v = row_in_v*ncol_v+col;
+	int64_t idx_in_res = row*ncol_v+col;
 
         // apply binary search
-        res.data<float>()[idx_in_res] = (
+        res.data<int64_t>()[idx_in_res] = (
           binary_search(a_data, row_in_a, v_data[idx_in_v], ncol_a)+1);
     }}
 
