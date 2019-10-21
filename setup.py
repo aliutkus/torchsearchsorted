@@ -23,7 +23,7 @@ tests_require = [
 # Now proceed to setup
 setup(
     name='torchsearchsorted',
-    version='1.0',
+    version='1.1',
     description='A searchsorted implementation for pytorch',
     keywords='searchsorted',
     author='Antoine Liutkus',

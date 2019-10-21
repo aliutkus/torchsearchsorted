@@ -3,7 +3,7 @@
 This repository is an implementation of the searchsorted function to work for pytorch CUDA Tensors. Initially derived from the great [C extension tutorial](https://github.com/chrischoy/pytorch-custom-cuda-tutorial), but totally changed since then because building C extensions is not available anymore on pytorch 1.0.
 
 
-> Warning: only works with pytorch > v1.0 and CUDA > v10
+> Warning: only works with pytorch > v1.3 and CUDA >= v10.1
 
 ## Description
 
@@ -27,7 +27,7 @@ Just `python setup.py install`, in the root folder of this repo. This will compi
 and install the torchsearchsorted module.
 be careful that sometimes, `nvcc` needs versions of `gcc` and `g++` that are older than those found by default on the system. If so, just create symbolic links to the right versions in your cuda/bin folder (where `nvcc` is)
 
-be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.0.1
+be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.3
 
 ## Usage
 
@@ -43,13 +43,13 @@ from torchsearchsorted import searchsorted
 Try `python test.py` with `torch` available for an example.
 
 ```
-Searching for 50000x1000 values in 50000x300 entries
-GPU:  searchsorted in 119.483ms
-CPU:  searchsorted in 8625.762ms
-    difference: 0.0
 Looking for 50000x1000 values in 50000x300 entries
-GPU:  searchsorted in 0.142ms
-CPU:  searchsorted in 7337.219ms
-    difference: 0.0
+CPU:  searchsorted in 5983.433ms
+GPU:  searchsorted in 1.256ms
+    difference between CPU and GPU: 0.000
+Looking for 50000x1000 values in 50000x300 entries
+CPU:  searchsorted in 5741.049ms
+GPU:  searchsorted in 0.079ms
+    difference between CPU and GPU: 0.000
 ```
 The first run comprises the time of allocation, while the second one does not.
