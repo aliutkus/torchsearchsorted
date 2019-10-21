@@ -48,7 +48,7 @@ if __name__ == '__main__':
             print('GPU:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
 
             # compute the difference between both
-            error = torch.norm(test_CPU.to('cuda')
-                               - test_GPU).cpu().numpy()
+            error = torch.norm(test_CPU.to('cuda').double()
+                               - test_GPU.double()).cpu().numpy()
 
             print('    difference between CPU and GPU: %0.3f' % error)

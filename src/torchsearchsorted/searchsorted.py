@@ -1,38 +1,41 @@
+from typing import Optional
+
 import torch
 
 # trying to import the CPU searchsorted
 SEARCHSORTED_CPU_AVAILABLE = True
 try:
-    from .cpu import searchsorted_cpu_wrapper
+    from torchsearchsorted.cpu import searchsorted_cpu_wrapper
 except ImportError:
     SEARCHSORTED_CPU_AVAILABLE = False
 
-# trying to import the CPU searchsorted
+# trying to import the CUDA searchsorted
 SEARCHSORTED_GPU_AVAILABLE = True
 try:
-    from .cuda import searchsorted_cuda_wrapper
+    from torchsearchsorted.cuda import searchsorted_cuda_wrapper
 except ImportError:
     SEARCHSORTED_GPU_AVAILABLE = False
 
 
-def searchsorted(a, v, out=None):
+def searchsorted(a: torch.Tensor, v: torch.Tensor,
+                 out: Optional[torch.LongTensor] = None) -> torch.LongTensor:
     assert len(a.shape) == 2, "input `a` must be 2-D."
     assert len(v.shape) == 2, "input `v` mus(t be 2-D."
     assert (a.shape[0] == v.shape[0]
             or a.shape[0] == 1
             or v.shape[0] == 1), ("`a` and `v` must have the same number of "
                                   "rows or one of them must have only one ")
-    assert a.is_cuda == v.is_cuda, ('inputs `a` and `v` must be both on '
-                                    'cpu or on gpu')
+    assert a.device == v.device, '`a` and `v` must be on the same device'
 
     result_shape = (max(a.shape[0], v.shape[0]), v.shape[1])
     if out is not None:
+        assert out.device == a.device, "`out` must be on the same device as `a`"
+        assert out.dtype == torch.long, "out.dtype must be torch.long"
         assert out.shape == result_shape, ("If the output tensor is provided, "
                                            "its shape must be correct. Here: "
                                            ''.join(result_shape))
     else:
-        out = torch.zeros(*result_shape,
-                          dtype=v.dtype, layout=v.layout, device=v.device)
+        out = torch.empty_like(v, dtype=torch.long)
 
     if a.is_cuda and not SEARCHSORTED_GPU_AVAILABLE:
         raise Exception('torchsearchsorted on CUDA device is asked, but it seems '
