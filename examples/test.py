@@ -4,7 +4,7 @@ import time
 
 if __name__ == '__main__':
     # defining the number of tests
-    ntests = 10
+    ntests = 2
 
     # defining the problem dimensions
     nrows_a = 50000
