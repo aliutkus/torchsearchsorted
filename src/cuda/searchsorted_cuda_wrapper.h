@@ -5,8 +5,9 @@
 #include "searchsorted_cuda_kernel.h"
 
 void searchsorted_cuda_wrapper(
-          at::Tensor a,
-          at::Tensor v,
-          at::Tensor res);
+    at::Tensor a,
+    at::Tensor v,
+    at::Tensor res,
+    bool side_left);
 
 #endif

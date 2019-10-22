@@ -4,8 +4,9 @@
 #include <torch/extension.h>
 
 void searchsorted_cuda(
-          at::Tensor a,
-          at::Tensor v,
-          at::Tensor res);
+    at::Tensor a,
+    at::Tensor v,
+    at::Tensor res,
+    bool side_left);
 
 #endif
