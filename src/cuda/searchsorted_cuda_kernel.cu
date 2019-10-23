@@ -9,7 +9,7 @@ int eval(scalar_t val, scalar_t *a, int64_t row, int64_t col, int64_t ncol, bool
     if (col == ncol - 1)
     {
       // special case: we are on the right border
-      if (a[row * ncol + col] < val){
+      if (a[row * ncol + col] <= val){
         return 1;}
       else {
         return -1;}
