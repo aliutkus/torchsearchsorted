@@ -24,15 +24,16 @@ def test_searchsorted_output_dtype(device):
     assert out.dtype == torch.long
     np.testing.assert_array_equal(out.cpu().numpy(), out_np)
 
-Ba_val =[1, 100, 200]
+Ba_val = [1, 100, 200]
 Bv_val = [1, 100, 200]
 A_val = [1, 50, 500]
 V_val = [1, 12, 120]
 side_val = ['left', 'right']
 nrepeat = 100
+
 @pytest.mark.parametrize('Ba,Bv,A,V,side', product(Ba_val, Bv_val, A_val, V_val, side_val))
 def test_searchsorted_correct(Ba, Bv, A, V, side, device):
-    if (Ba != Bv):
+    if Ba > 1 and Bv > 1 and Ba != Bv:
         return
     for test in range(nrepeat):
         a = torch.sort(torch.rand(Ba, A, device=device), dim=1)[0]
