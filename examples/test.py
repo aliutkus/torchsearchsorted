@@ -4,7 +4,7 @@ import time
 
 if __name__ == '__main__':
     # defining the number of tests
-    ntests = 2
+    ntests = 1
 
     # defining the problem dimensions
     nrows_a = 50000
@@ -22,18 +22,21 @@ if __name__ == '__main__':
                                                              nrows_a,
                                                              nsorted_values))
 
+        side = 'right'
         # generate a matrix with sorted rows
         a = torch.randn(nrows_a, nsorted_values, device='cpu')
         a = torch.sort(a, dim=1)[0]
         # generate a matrix of values to searchsort
         v = torch.randn(nrows_v, nvalues, device='cpu')
-        #a = torch.tensor([[0., 1.]])
-        #v = torch.tensor([[-1.]])
+
+        # a = torch.tensor([[0., 1.]])
+        # v = torch.tensor([[1.]])
+
         t0 = time.time()
-        test_NP = torch.tensor(numpy_searchsorted(a, v))
+        test_NP = torch.tensor(numpy_searchsorted(a, v, side))
         print('NUMPY:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
         t0 = time.time()
-        test_CPU = searchsorted(a, v, test_CPU)
+        test_CPU = searchsorted(a, v, test_CPU, side)
         print('CPU:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
         # compute the difference between both
         error_CPU = torch.norm(test_NP.double()
@@ -52,7 +55,7 @@ if __name__ == '__main__':
 
             # launch searchsorted on those
             t0 = time.time()
-            test_GPU = searchsorted(a, v, test_GPU)
+            test_GPU = searchsorted(a, v, test_GPU, side)
             print('GPU:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
 
             # compute the difference between both

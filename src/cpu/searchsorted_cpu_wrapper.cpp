@@ -8,7 +8,7 @@ int eval(float val, float *a, int64_t row, int64_t col, int64_t ncol, bool side_
     if (col == ncol - 1)
     {
       // special case: we are on the right border
-      if (a[row * ncol + col] < val){
+      if (a[row * ncol + col] <= val){
         return 1;}
       else {
         return -1;}
@@ -49,7 +49,7 @@ int64_t binary_search(float *a, int64_t row, float val, int64_t ncol, bool side_
   * -1 if `val` is smaller than the smallest value found within that row of `a`
   * `ncol` - 1 if `val` is larger than the largest element of that row of `a`
   * Otherwise, return the column index `res` such that:
-    - a[row, col] < val <= a[row, col+1]. (if side_left), or 
+    - a[row, col] < val <= a[row, col+1]. (if side_left), or
     - a[row, col] < val <= a[row, col+1] (if not side_left).
    */
 
