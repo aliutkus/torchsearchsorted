@@ -8,13 +8,17 @@ modules = [
                  ['src/cpu/searchsorted_cpu_wrapper.cpp']),
 ]
 
-# If nvcc is available, add the CUDA extension
+# If nvcc is available, add the CUDA extension, messages are
+# printed when using `pip install -v .` or `python setup.py -v install`
 if CUDA_HOME:
+    print('torchsearchsorted will be installed with CUDA support')
     modules.append(
         CUDAExtension('torchsearchsorted.cuda',
                       ['src/cuda/searchsorted_cuda_wrapper.cpp',
                        'src/cuda/searchsorted_cuda_kernel.cu'])
     )
+else:
+    print('torchsearchsorted will be installed for CPU only')
 
 tests_require = [
     'pytest',
