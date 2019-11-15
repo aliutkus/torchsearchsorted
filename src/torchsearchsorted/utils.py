@@ -1,15 +1,23 @@
 import numpy as np
 
 
-def numpy_searchsorted(a: np.ndarray, v: np.ndarray, side='left'):
-    """Numpy version of searchsorted that works batch-wise on pytorch tensors
-    """
-    nrows_a = a.shape[0]
-    (nrows_v, ncols_v) = v.shape
-    nrows_out = max(nrows_a, nrows_v)
-    out = np.empty((nrows_out, ncols_v), dtype=np.long)
-    def sel(data, row):
-        return data[0] if data.shape[0] == 1 else data[row]
-    for row in range(nrows_out):
-        out[row] = np.searchsorted(sel(a, row), sel(v, row), side=side)
+def numpy_searchsorted(a: np.ndarray, v: np.ndarray, side='left') -> np.ndarray:
+    """Batch-wise version of numpy's searchsorted"""
+    a = np.asarray(a)
+    v = np.asarray(v)
+    a, v = broadcast_arrays(a, v, axis=0)
+    out = np.empty(v.shape, dtype=np.long)
+    for i in range(v.shape[0]):
+        out[i] = np.searchsorted(a[i], v[i], side=side)
     return out
+
+
+def broadcast_arrays(*arrays, axis=0):
+    """Broadcast arrays along one axis, leaving other axes unchanged"""
+    if axis < 0:
+        raise ValueError(f"Negative axis not supported, got {axis}")
+    axis_size = max(a.shape[axis] for a in arrays)
+    return [
+        np.broadcast_to(a, (*a.shape[:axis], axis_size, *a.shape[axis + 1:]))
+        for a in arrays
+    ]
