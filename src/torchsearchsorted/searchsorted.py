@@ -10,7 +10,7 @@ if torch.cuda.is_available():
         from torchsearchsorted.cuda import searchsorted_cuda_wrapper
     except ImportError as e:
         warnings.warn("PyTorch is installed with CUDA support, but "
-                      "torchsearchsorted for CUDA was not installed,"
+                      "torchsearchsorted for CUDA was not installed, "
                       "please repeat the installation or avoid passing "
                       "CUDA tensors to the `searchsorted`.")
 
@@ -27,12 +27,6 @@ def searchsorted(a: torch.Tensor,
         raise ValueError(f"Inputs `a` and `v` must on the same device, "
                          f"got {a.device} and {v.device}")
 
-    # Batch dimension:
-    # (B, A), (B, V) -> (B, A), (B, V)
-    # (B, A), (1, V) -> (B, A), (B, V)
-    # (1, A), (B, V) -> (B, A), (B, V)
-    # (1, A), (1, V) -> (1, A), (1, V)
-    # (X, A), (Y, V) -> ValueError
     a, v = broadcast_tensors(a, v, dim=0)
 
     if out is not None:
@@ -62,5 +56,5 @@ def broadcast_tensors(*tensors, dim=0):
     if dim < 0:
         raise ValueError(f"Negative dimensions not supported, got {dim}")
     dim_size = max(t.shape[dim] for t in tensors)
-    return [t.expand(*t.shape[:dim], dim_size, *t.shape[dim+1:])
+    return [t.expand(*t.shape[:dim], dim_size, *t.shape[dim + 1:])
             for t in tensors]
