@@ -106,10 +106,10 @@ tests = {
 def test_correct(test, device):
     a = torch.tensor(test['a'], dtype=torch.float, device=device)
     v = torch.tensor(test['v'], dtype=torch.float, device=device)
-    expected = torch.tensor(test['expected'], dtype=torch.long, device=device)
+    expected = torch.tensor(test['expected'], dtype=torch.long)
 
     out = searchsorted(a, v, side=test['side'])
-    np.testing.assert_array_equal(out.cpu().numpy(), expected)
+    np.testing.assert_array_equal(out.cpu().numpy(), expected.numpy())
 
 
 @pytest.mark.parametrize('Ba, Bv', [
