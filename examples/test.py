@@ -33,7 +33,7 @@ if __name__ == '__main__':
         # v = torch.tensor([[1.]])
 
         t0 = time.time()
-        test_NP = torch.tensor(numpy_searchsorted(a, v, side))
+        test_NP = torch.tensor(numpy_searchsorted(a, v, side=side))
         print('NUMPY:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
         t0 = time.time()
         test_CPU = searchsorted(a, v, test_CPU, side)
