@@ -2,7 +2,6 @@
 
 This repository is an implementation of the searchsorted function to work for pytorch CUDA Tensors. Initially derived from the great [C extension tutorial](https://github.com/chrischoy/pytorch-custom-cuda-tutorial), but totally changed since then because building C extensions is not available anymore on pytorch 1.0.
 
-
 > Warning: only works with pytorch > v1.3 and CUDA >= v10.1
 
 ## Description
@@ -24,39 +23,60 @@ the output is of size as `(nrows, ncols_v)`. If all input tensors are on GPU, a 
 
 
 ## Installation
+After setting up an environment with pytorch >= 1.3, run either of these commands from the root folder of the repo: 
 
-Just `python setup.py install`, in the root folder of this repo. This will compile
-and install the torchsearchsorted module.
-be careful that sometimes, `nvcc` needs versions of `gcc` and `g++` that are older than those found by default on the system. If so, just create symbolic links to the right versions in your cuda/bin folder (where `nvcc` is)
+```bash
+pip install -v .
+```
 
-be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.3
+```bash
+python setup.py install -v
+```
+
+The verbose flag `-v` is not mandatory, but it will print whether the installer was able to find `nvcc` and install the CUDA version of `torchsearchsorted`.
+If you're having problems with the installation, make sure `nvcc` and `gcc` are installed and available in your path, e.g.:
+```bash
+export PATH="/usr/local/cuda/bin:${PATH}"
+export CPATH="/usr/local/cuda/include:${CPATH}"
+
+which gcc
+which nvcc
+
+pip install -v .
+```
 
 ## Usage
 
-Just import the torchsearchsorted package after installation. I typically do:
-
-```
+```python
+import torch
 from torchsearchsorted import searchsorted
+
+a = torch.sort(torch.randn(5000, 300, device='cuda'), dim=1)[0]
+v = torch.randn(5000, 100, device='cuda')
+out = searchsorted(a, v)
 ```
 
 
-## Testing
+## Testing and benchmarking
 
-Try `python test.py` with `torch` available for an example.
-
+Install test dependencies and run the unit tests:
+```bash
+pip install '.[test]'
+pytest -v
 ```
-Looking for 50000x1000 values in 50000x300 entries
-NUMPY:  searchsorted in 4851.592ms
-CPU:  searchsorted in 4805.432ms
-    difference between CPU and NUMPY: 0.000
-GPU:  searchsorted in 1.055ms
-    difference between GPU and NUMPY: 0.000
 
-Looking for 50000x1000 values in 50000x300 entries
-NUMPY:  searchsorted in 4333.964ms
-CPU:  searchsorted in 4753.958ms
-    difference between CPU and NUMPY: 0.000
-GPU:  searchsorted in 0.391ms
-    difference between GPU and NUMPY: 0.000
+Run [benchmark.py](examples/benchmark.py) for a speed comparison: 
+```bash
+python examples/benchmark.py
 ```
-The first run comprises the time of allocation, while the second one does not.
+```text
+Benchmark searchsorted:
+- a [5000 x 300]
+- v [5000 x 100]
+- reporting fastest time of 20 runs
+- each run executes searchsorted 100 times
+
+Numpy: 	3.4524286500000017
+CPU: 	10.617608329001087
+CUDA: 	0.00124932999824523
+```
