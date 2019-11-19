@@ -1,12 +1,14 @@
 import numpy as np
 
 
-def numpy_searchsorted(a: np.ndarray, v: np.ndarray, side='left') -> np.ndarray:
+def numpy_searchsorted(a: np.ndarray, v: np.ndarray,
+                       out: np.ndarray=None, side='left') -> np.ndarray:
     """Batch-wise version of numpy's searchsorted"""
     a = np.asarray(a)
     v = np.asarray(v)
     a, v = broadcast_arrays(a, v, axis=0)
-    out = np.empty(v.shape, dtype=np.long)
+    if out is None:
+        out = np.empty(v.shape, dtype=np.long)
     for i in range(v.shape[0]):
         out[i] = np.searchsorted(a[i], v[i], side=side)
     return out
