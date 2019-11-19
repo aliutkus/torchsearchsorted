@@ -14,10 +14,11 @@ int64_t bisect_left(float *array, float value, int64_t left, int64_t right) {
  * If value is < than every element, the returned index is equal to left.
  * If value is >=  than every element, the returned index is equal to right.
  */
+  int64_t mid;
   while (left < right) {
-    int64_t mid = (left + right) / 2;
+    mid = (left + right) / 2;
     if (value > array[mid]) {
-      left = ++mid;
+      left = mid + 1;
     } else {
       right = mid;
     }
@@ -38,10 +39,11 @@ int64_t bisect_right(float *array, float value, int64_t left, int64_t right) {
  * If value is <= than every element, the returned index is equal to left.
  * If value is >  than every element, the returned index is equal to right.
  */
+  int64_t mid;
   while (left < right) {
-    int64_t mid = (left + right) / 2;
+    mid = (left + right) / 2;
     if (value >= array[mid]) {
-      left = ++mid;
+      left = mid + 1;
     } else {
       right = mid;
     }
