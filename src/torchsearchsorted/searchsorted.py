@@ -1,53 +1,60 @@
+import warnings
 from typing import Optional
 
 import torch
 
-# trying to import the CPU searchsorted
-SEARCHSORTED_CPU_AVAILABLE = True
-try:
-    from torchsearchsorted.cpu import searchsorted_cpu_wrapper
-except ImportError:
-    SEARCHSORTED_CPU_AVAILABLE = False
+from torchsearchsorted.cpu import searchsorted_cpu_wrapper
 
-# trying to import the CUDA searchsorted
-SEARCHSORTED_GPU_AVAILABLE = True
-try:
-    from torchsearchsorted.cuda import searchsorted_cuda_wrapper
-except ImportError:
-    SEARCHSORTED_GPU_AVAILABLE = False
+if torch.cuda.is_available():
+    try:
+        from torchsearchsorted.cuda import searchsorted_cuda_wrapper
+    except ImportError as e:
+        warnings.warn("PyTorch is installed with CUDA support, but "
+                      "torchsearchsorted for CUDA was not installed, "
+                      "please repeat the installation or avoid passing "
+                      "CUDA tensors to the `searchsorted`.")
 
 
-def searchsorted(a: torch.Tensor, v: torch.Tensor,
+def searchsorted(a: torch.Tensor,
+                 v: torch.Tensor,
                  out: Optional[torch.LongTensor] = None,
                  side='left') -> torch.LongTensor:
-    assert len(a.shape) == 2, "input `a` must be 2-D."
-    assert len(v.shape) == 2, "input `v` mus(t be 2-D."
-    assert (a.shape[0] == v.shape[0]
-            or a.shape[0] == 1
-            or v.shape[0] == 1), ("`a` and `v` must have the same number of "
-                                  "rows or one of them must have only one ")
-    assert a.device == v.device, '`a` and `v` must be on the same device'
+    if a.ndimension() != 2:
+        raise ValueError(f"Input `a` must be 2D, got shape {a.shape}")
+    if v.ndimension() != 2:
+        raise ValueError(f"Input `v` must be 2D, got shape {v.shape}")
+    if a.device != v.device:
+        raise ValueError(f"Inputs `a` and `v` must on the same device, "
+                         f"got {a.device} and {v.device}")
 
-    result_shape = (max(a.shape[0], v.shape[0]), v.shape[1])
+    a, v = broadcast_tensors(a, v, dim=0)
+
     if out is not None:
-        assert out.device == a.device, "`out` must be on the same device as `a`"
-        assert out.dtype == torch.long, "out.dtype must be torch.long"
-        assert out.shape == result_shape, ("If the output tensor is provided, "
-                                           "its shape must be correct.")
+        if out.shape != v.shape:
+            raise ValueError(f"Output `out` must have the same shape as `v`, "
+                             f"got {out.shape} and {a.shape}")
+        if out.device != v.device:
+            raise ValueError(f"Output `out` must be on the same device as `v`"
+                             f"device, got {out.device} and {v.device}")
+        if out.dtype != torch.long:
+            raise ValueError(f"Output `out` must have dtype `torch.long`, "
+                             f"got {out.dtype}")
     else:
-        out = torch.empty(result_shape, device=v.device, dtype=torch.long)
+        out = torch.empty(v.shape, device=v.device, dtype=torch.long)
 
-    if a.is_cuda and not SEARCHSORTED_GPU_AVAILABLE:
-        raise Exception('torchsearchsorted on CUDA device is asked, but it seems '
-                        'that it is not available. Please install it')
-    if not a.is_cuda and not SEARCHSORTED_CPU_AVAILABLE:
-        raise Exception('torchsearchsorted on CPU is not available. '
-                        'Please install it.')
-
-    left_side = 1 if side=='left' else 0
+    left_side = side == 'left'
     if a.is_cuda:
         searchsorted_cuda_wrapper(a, v, out, left_side)
     else:
         searchsorted_cpu_wrapper(a, v, out, left_side)
 
     return out
+
+
+def broadcast_tensors(*tensors, dim=0):
+    """Broadcast tensors along one dimension, leaving others dims unchanged"""
+    if dim < 0:
+        raise ValueError(f"Negative dimensions not supported, got {dim}")
+    dim_size = max(t.shape[dim] for t in tensors)
+    return [t.expand(*t.shape[:dim], dim_size, *t.shape[dim + 1:])
+            for t in tensors]
