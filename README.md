@@ -25,8 +25,9 @@ the output is of size as `(nrows, ncols_v)`. If all input tensors are on GPU, a 
 
 ## Installation
 
-Just `python setup.py install`, in the root folder of this repo. This will compile
+Just `pip install .`, in the root folder of this repo. This will compile
 and install the torchsearchsorted module.
+
 be careful that sometimes, `nvcc` needs versions of `gcc` and `g++` that are older than those found by default on the system. If so, just create symbolic links to the right versions in your cuda/bin folder (where `nvcc` is)
 
 For instance, on my machine, I had `gcc` and `g++` v9 installed, but `nvcc` required v8.
@@ -67,3 +68,18 @@ GPU:  searchsorted in 0.391ms
     difference between GPU and NUMPY: 0.000
 ```
 The first run comprises the time of allocation, while the second one does not.
+
+
+You may also use the nice code written by [@baldassarreFe](https://github.com/baldassarreFe), that tests `searchsorted` on many runs:
+
+```
+Benchmark searchsorted:
+- a [5000 x 300]
+- v [5000 x 100]
+- reporting fastest time of 20 runs
+- each run executes searchsorted 100 times
+
+Numpy: 	4.6302046799100935
+CPU: 	5.041533078998327
+CUDA: 	0.0007955809123814106
+```
