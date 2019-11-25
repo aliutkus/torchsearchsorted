@@ -29,6 +29,13 @@ Just `python setup.py install`, in the root folder of this repo. This will compi
 and install the torchsearchsorted module.
 be careful that sometimes, `nvcc` needs versions of `gcc` and `g++` that are older than those found by default on the system. If so, just create symbolic links to the right versions in your cuda/bin folder (where `nvcc` is)
 
+For instance, on my machine, I had `gcc` and `g++` v9 installed, but `nvcc` required v8.
+So I had to do:
+
+> sudo apt-get install g++-8 gcc-8
+> sudo ln -s /usr/bin/gcc-8 /usr/local/cuda-10.1/bin/gcc
+> sudo ln -s /usr/bin/g++-8 /usr/local/cuda-10.1/bin/g++
+
 be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.3
 
 ## Usage
