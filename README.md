@@ -50,9 +50,11 @@ from torchsearchsorted import searchsorted
 
 ## Testing
 
-Try `python test.py` with `torch` available for an example.
+Under the `examples` subfolder, you may:
 
-```
+1. try `python test.py` with `torch` available.
+
+  ```
 Looking for 50000x1000 values in 50000x300 entries
 NUMPY:  searchsorted in 4851.592ms
 CPU:  searchsorted in 4805.432ms
@@ -66,13 +68,12 @@ CPU:  searchsorted in 4753.958ms
     difference between CPU and NUMPY: 0.000
 GPU:  searchsorted in 0.391ms
     difference between GPU and NUMPY: 0.000
-```
-The first run comprises the time of allocation, while the second one does not.
+  ```
+  The first run comprises the time of allocation, while the second one does not.
 
+2. You may also use the nice `benchmark.py` code written by [@baldassarreFe](https://github.com/baldassarreFe), that tests `searchsorted` on many runs:
 
-You may also use the nice code written by [@baldassarreFe](https://github.com/baldassarreFe), that tests `searchsorted` on many runs:
-
-```
+  ```
 Benchmark searchsorted:
 - a [5000 x 300]
 - v [5000 x 100]
@@ -82,4 +83,4 @@ Benchmark searchsorted:
 Numpy: 	4.6302046799100935
 CPU: 	5.041533078998327
 CUDA: 	0.0007955809123814106
-```
+  ```
