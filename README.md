@@ -32,9 +32,9 @@ be careful that sometimes, `nvcc` needs versions of `gcc` and `g++` that are old
 For instance, on my machine, I had `gcc` and `g++` v9 installed, but `nvcc` required v8.
 So I had to do:
 
-> sudo apt-get install g++-8 gcc-8
-> sudo ln -s /usr/bin/gcc-8 /usr/local/cuda-10.1/bin/gcc
-> sudo ln -s /usr/bin/g++-8 /usr/local/cuda-10.1/bin/g++
+> sudo apt-get install g++-8 gcc-8  
+> sudo ln -s /usr/bin/gcc-8 /usr/local/cuda-10.1/bin/gcc  
+> sudo ln -s /usr/bin/g++-8 /usr/local/cuda-10.1/bin/g++  
 
 be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.3
 
