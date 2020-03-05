@@ -1,7 +1,8 @@
 #include "searchsorted_cpu_wrapper.h"
 #include <stdio.h>
 
-int eval(float val, float *a, int64_t row, int64_t col, int64_t ncol, bool side_left)
+template<typename scalar_t>
+int eval(scalar_t val, scalar_t *a, int64_t row, int64_t col, int64_t ncol, bool side_left)
 {
     /* Evaluates whether a[row,col] < val <= a[row, col+1]*/
 
@@ -37,8 +38,8 @@ int eval(float val, float *a, int64_t row, int64_t col, int64_t ncol, bool side_
     }
 }
 
-
-int64_t binary_search(float *a, int64_t row, float val, int64_t ncol, bool side_left)
+template<typename scalar_t>
+int64_t binary_search(scalar_t*a, int64_t row, scalar_t val, int64_t ncol, bool side_left)
 {
   /* Look for the value `val` within row `row` of matrix `a`, which
   has `ncol` columns.
@@ -96,24 +97,27 @@ void searchsorted_cpu_wrapper(
   //auto acc_v = v.accessor<float, 2>();
   //auto acc_res = res.accessor<float, 2>();
 
-  float *a_data = a.data<float>();
-  float *v_data = v.data<float>();
+  AT_DISPATCH_ALL_TYPES(a.type(), "searchsorted cpu", [&] {
 
-  for (int64_t row = 0; row < nrow_res; row++)
-  {
-    for (int64_t col = 0; col < ncol_v; col++)
-    {
-      // get the value to look for
-      int64_t row_in_v = (nrow_v == 1) ? 0 : row;
-      int64_t row_in_a = (nrow_a == 1) ? 0 : row;
+      scalar_t* a_data = a.data_ptr<scalar_t>();
+      scalar_t* v_data = v.data_ptr<scalar_t>();
 
-      int64_t idx_in_v = row_in_v * ncol_v + col;
-      int64_t idx_in_res = row * ncol_v + col;
+      for (int64_t row = 0; row < nrow_res; row++)
+      {
+          for (int64_t col = 0; col < ncol_v; col++)
+          {
+              // get the value to look for
+              int64_t row_in_v = (nrow_v == 1) ? 0 : row;
+              int64_t row_in_a = (nrow_a == 1) ? 0 : row;
 
-      // apply binary search
-      res.data<int64_t>()[idx_in_res] = (binary_search(a_data, row_in_a, v_data[idx_in_v], ncol_a, side_left) + 1);
-    }}
+              int64_t idx_in_v = row_in_v * ncol_v + col;
+              int64_t idx_in_res = row * ncol_v + col;
 
+              // apply binary search
+              res.data<int64_t>()[idx_in_res] = (binary_search(a_data, row_in_a, v_data[idx_in_v], ncol_a, side_left) + 1);
+          }
+      }
+      });
   }
 
   PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
