@@ -101,6 +101,7 @@ void searchsorted_cpu_wrapper(
 
       scalar_t* a_data = a.data_ptr<scalar_t>();
       scalar_t* v_data = v.data_ptr<scalar_t>();
+      int64_t* res_data = res.data<int64_t>();
 
       for (int64_t row = 0; row < nrow_res; row++)
       {
@@ -114,7 +115,7 @@ void searchsorted_cpu_wrapper(
               int64_t idx_in_res = row * ncol_v + col;
 
               // apply binary search
-              res.data<int64_t>()[idx_in_res] = (binary_search(a_data, row_in_a, v_data[idx_in_v], ncol_a, side_left) + 1);
+              res_data[idx_in_res] = (binary_search(a_data, row_in_a, v_data[idx_in_v], ncol_a, side_left) + 1);
           }
       }
       });
