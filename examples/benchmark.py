@@ -33,8 +33,14 @@ def get_tensors(device):
     a = torch.sort(torch.randn(B, A, device=device), dim=1)[0]
     v = torch.randn(B, V, device=device)
     out = torch.empty(B, V, device=device, dtype=torch.long)
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
     return a, v, out
 
+def searchsorted_synchronized(a,v,out=None,side='left'):
+    out = searchsorted(a,v,out,side)
+    torch.cuda.synchronize()
+    return out
 
 numpy = timeit.repeat(
     stmt="numpy_searchsorted(a, v, side='left')",
