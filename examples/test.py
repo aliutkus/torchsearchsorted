@@ -52,10 +52,11 @@ if __name__ == '__main__':
             # now do the CPU
             a = a.to('cuda')
             v = v.to('cuda')
-
+            torch.cuda.synchronize()
             # launch searchsorted on those
             t0 = time.time()
             test_GPU = searchsorted(a, v, test_GPU, side)
+            torch.cuda.synchronize()
             print('GPU:  searchsorted in %0.3fms' % (1000*(time.time()-t0)))
 
             # compute the difference between both
