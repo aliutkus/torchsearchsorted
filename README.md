@@ -3,7 +3,9 @@
 This repository is an implementation of the searchsorted function to work for pytorch CUDA Tensors. Initially derived from the great [C extension tutorial](https://github.com/chrischoy/pytorch-custom-cuda-tutorial), but totally changed since then because building C extensions is not available anymore on pytorch 1.0.
 
 
-> Warning: only works with pytorch > v1.3 and CUDA >= v10.1
+> Warnings:
+  * only works with pytorch > v1.3 and CUDA >= v10.1
+  * vectors have to be contiguous for torchsearchsorted to give consistant results. use `.contiguous()` on all tensor arguments before calling
 
 ## Description
 
