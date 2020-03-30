@@ -13,7 +13,7 @@ Implements a function `searchsorted(a, v, out, side)` that works just like the [
 * `a` is of shape either `(1, ncols_a)` or `(nrows, ncols_a)`
 * `b` is of shape either `(1, ncols_v)` or `(nrows, ncols_v)`.
 * `out` is either `None` or of shape `(nrows, ncols_v)`. If provided and of the right shape, the result is put there. This is to avoid costly memory allocations if the user already did it.
-* `side` is either "left" or "right". See the [numpy doc](https://docs.scipy.org/doc/numpy/reference/generated/numpy.searchsorted.html#numpy.searchsorted).
+* `side` is either "left" or "right". See the [numpy doc](https://docs.scipy.org/doc/numpy/reference/generated/numpy.searchsorted.html#numpy.searchsorted). Please not that the current implementation *does not correctly handle this parameter*. Help welcome to improve the speed of [this PR](https://github.com/aliutkus/torchsearchsorted/pull/7)
 
 the output is of size as `(nrows, ncols_v)`. If all input tensors are on GPU, a cuda version will be called. Otherwise, it will be on CPU.
 
@@ -23,6 +23,7 @@ the output is of size as `(nrows, ncols_v)`. If all input tensors are on GPU, a 
 * This function has not been heavily tested. Use at your own risks
 * When `a` is not sorted, the results vary from numpy's version. But I decided not to care about this because the function should not be called in this case.
 * In some cases, the results vary from numpy's version. However, as far as I could see, this only happens when values are equal, which means we actually don't care about the order in which this value is added. I decided not to care about this also.
+* vectors have to be contiguous for torchsearchsorted to give consistant results. use `.contiguous()` on all tensor arguments before calling
 
 
 ## Installation
