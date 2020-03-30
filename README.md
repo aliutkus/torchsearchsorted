@@ -4,8 +4,8 @@ This repository is an implementation of the searchsorted function to work for py
 
 
 > Warnings:
-  * only works with pytorch > v1.3 and CUDA >= v10.1
-  * vectors have to be contiguous for torchsearchsorted to give consistant results. use `.contiguous()` on all tensor arguments before calling
+>  * only works with pytorch > v1.3 and CUDA >= v10.1
+>  * vectors have to be contiguous for torchsearchsorted to give consistant results. use `.contiguous()` on all tensor arguments before calling
 
 ## Description
 
