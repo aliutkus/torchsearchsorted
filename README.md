@@ -4,7 +4,7 @@ This repository is an implementation of the searchsorted function to work for py
 
 
 > Warnings:
->  * only works with pytorch > v1.3 and CUDA >= v10.1
+>  * only works with pytorch > v1.4 and CUDA >= v10.1
 >  * **NOTE** When using `searchsorted()` for practical applications, tensors need to be contiguous in memory. This can be easily achieved by calling `tensor.contiguous()` on the input tensors. Failing to do so _will_ lead to inconsistent results across applications.
 
 ## Description
@@ -40,7 +40,7 @@ So I had to do:
 > sudo ln -s /usr/bin/gcc-8 /usr/local/cuda-10.1/bin/gcc  
 > sudo ln -s /usr/bin/g++-8 /usr/local/cuda-10.1/bin/g++  
 
-be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.3
+be careful that you need pytorch to be installed on your system. The code was tested on pytorch v1.5
 
 ## Usage
 
