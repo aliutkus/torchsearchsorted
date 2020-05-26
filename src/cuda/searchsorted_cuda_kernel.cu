@@ -131,9 +131,9 @@ void searchsorted_cuda(
          blocks.y = ceil(double(nrow_res)/double(threads.y));
       }
 
-      AT_DISPATCH_ALL_TYPES(a.type(), "searchsorted cuda", ([&] {
+      AT_DISPATCH_ALL_TYPES(a.scalar_type(), "searchsorted cuda", ([&] {
         searchsorted_kernel<scalar_t><<<blocks, threads>>>(
-          res.data<int64_t>(),
+          res.data_ptr<int64_t>(),
           a.data_ptr<scalar_t>(),
           v.data_ptr<scalar_t>(),
           nrow_res, nrow_a, nrow_v, ncol_a, ncol_v, side_left);

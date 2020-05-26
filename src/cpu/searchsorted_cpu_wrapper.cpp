@@ -97,11 +97,11 @@ void searchsorted_cpu_wrapper(
   //auto acc_v = v.accessor<float, 2>();
   //auto acc_res = res.accessor<float, 2>();
 
-  AT_DISPATCH_ALL_TYPES(a.type(), "searchsorted cpu", [&] {
+  AT_DISPATCH_ALL_TYPES(a.scalar_type(), "searchsorted cpu", [&] {
 
       scalar_t* a_data = a.data_ptr<scalar_t>();
       scalar_t* v_data = v.data_ptr<scalar_t>();
-      int64_t* res_data = res.data<int64_t>();
+      int64_t* res_data = res.data_ptr<int64_t>();
 
       for (int64_t row = 0; row < nrow_res; row++)
       {
