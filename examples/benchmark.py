@@ -25,7 +25,7 @@ print(
 def get_arrays():
     a = np.sort(np.random.randn(B, A), axis=1)
     v = np.random.randn(B, V)
-    out = np.empty_like(v, dtype=np.long)
+    out = np.empty_like(v, dtype=np.int_)
     return a, v, out
 
 
